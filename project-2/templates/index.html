@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1 style="text-align: center;">Scientific Calculator</h1>
+    <div class="calculator">
+        <div class="expression">
+            <span id="expression"></span>
+        </div>
+        <div class="buttons">
+            <button onclick="appendToExpression('1')">1</button>
+            <button onclick="appendToExpression('2')">2</button>
+            <button onclick="appendToExpression('3')">3</button>
+            <button onclick="appendToExpression('4')">4</button>
+            <button onclick="appendToExpression('5')">5</button>
+            <button onclick="appendToExpression('6')">6</button>
+            <button onclick="appendToExpression('7')">7</button>
+            <button onclick="appendToExpression('8')">8</button>
+            <button onclick="appendToExpression('9')">9</button>
+            <button onclick="appendToExpression('0')">0</button>
+            <button onclick="appendToExpression('+')">+</button>
+            <button onclick="appendToExpression('-')">-</button>
+            <button onclick="appendToExpression('*')">*</button>
+            <button onclick="appendToExpression('/')">/</button>
+            <button onclick="appendToExpression('(')"> ( </button>
+            <button onclick="appendToExpression(')')"> ) </button>
+            <button onclick="appendToExpression('sqrt(')">√(</button>
+            <button onclick="appendToExpression('^')">^</button>
+            <button onclick="appendToExpression('sin(')">sin(</button>
+            <button onclick="appendToExpression('cos(')">cos(</button>
+            <button onclick="appendToExpression('tan(')">tan(</button>
+            <button onclick="appendToExpression('log(')">log(</button>
+                            <button onclick="appendToExpression('e')">e</button>
+                            <button onclick="appendToExpression('ln(')">ln(</button>
+                              <button onclick="appendToExpression('pi')">π</button>
+            <button onclick="calculateExpression()">Calculate</button>
+            <button onclick="backspace()">Backspace</button>
+            <button onclick="clearExpression()">Clear</button>
+        </div>
+        <div class="result">
+            <span>
+            {% if result %}
+                Result: {{ result }}
+            {% endif %}
+            </span>
+        </div>
+    </div>
+
+    <script>
+        let expression = '';
+
+        // JavaScript function to handle appending values
+        function appendToExpression(value) {
+            const expressionSpan = document.getElementById('expression');
+            expression += value;
+            expressionSpan.textContent = expression;
+        }
+
+        // JavaScript function to handle backspace
+        function backspace() {
+            const expressionSpan = document.getElementById('expression');
+            expression = expressionSpan.textContent;
+
+            // Remove the last character or number from the expression
+            expression = expression.slice(0, -1);
+
+            // Update the input field with the modified expression
+            expressionSpan.textContent = expression;
+        }
+
+        function clearExpression() {
+            const expressionSpan = document.getElementById('expression');
+            expression = '';
+            expressionSpan.textContent = expression;
+        }
+
+        function calculateExpression() {
+            const expressionSpan = document.getElementById('expression');
+            const expression = expressionSpan.textContent;
+            fetch('/', {
+                method: 'POST',
+                body: JSON.stringify({ expression }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    expressionSpan.textContent = data.result;
+                    expression = data.result;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
